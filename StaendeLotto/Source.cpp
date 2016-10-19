@@ -15,13 +15,23 @@ struct Result{
 		minResult(2147483647),
 		maxResult(-2147483647),
 		triesUntilMaxResult(0),
-		averageResult(0){}
+		averageResult(0){		
+		for (int i = 0; i < 8; i++){
+			occurences[i] = 0;
+		}
+	}
+
 	Result(int min, int max, int triesUntilMax, int avg) :
 		minResult(min),
 		maxResult(max),
 		triesUntilMaxResult(triesUntilMax),
-		averageResult(avg){}
+		averageResult(avg){
+		for (int i = 0; i < 8; i++){
+			occurences[i] = 0;
+		}
+	}
 
+	int occurences[8];
 	int minResult;
 	int maxResult;
 	int triesUntilMaxResult;
@@ -61,6 +71,25 @@ int countOccurencesOf(int(&arr)[N], int number){
 	return count;
 }
 
+long long int factorial(long long int number) {
+	long long int temp;
+
+	if (number <= 1) return 1;
+
+	temp = number * factorial(number - 1);
+	return temp;
+}
+
+double binomial(int n, int k, double chance){
+	return ((factorial(n) / (factorial(n - k) * factorial(k))) * pow(chance, k) * pow(1-chance, n-k));
+}
+
+// Todo: Verkar som att vi får overflow här, samt så funkar den ej även för lägre nummer.
+double probabilityLotto(long long int n, long long int k, long long int nrOfLegalNumbers){
+	long long int combinations = factorial(n) / (factorial(n - k) * factorial(k));
+	return (double) 1 / (combinations * factorial(k) * factorial(nrOfLegalNumbers - n) * (factorial(nrOfLegalNumbers - n) / factorial(nrOfLegalNumbers - n - (n - k)))) / factorial(nrOfLegalNumbers);
+}
+
 Result lottoExperiment(int(&rad)[7], const int numWeeks){
 	Result res;
 	int sum = 0;
@@ -72,6 +101,7 @@ Result lottoExperiment(int(&rad)[7], const int numWeeks){
 		for (int j = 0; j < 7; j++){
 			matches += countOccurencesOf(datorRad, rad[j]);
 		}
+		res.occurences[matches]++;
 		sum += matches;
 
 		if (matches < res.minResult){
@@ -98,33 +128,54 @@ vector<string> split(const string &str, char delim) {
 	return splitVec;
 }
 
+string stringRepeat(string str, int amount){
+	string repeatedStr = "";
+	for (int i = 0; i < amount; i++){
+		repeatedStr += str;
+	}
+	return repeatedStr;
+}
+
 
 void main(){
 	srand(time(NULL));
+	const int numWeeks = 7000000;
 
-	// Input 7 numbers and split into vector of strings.
-	vector<string> splitStrings;
-	string str = "";
-	while (splitStrings.size() != 7){
-		cout << "Enter \"lottorad\" (7 numbers separated by spaces): ";
-		getline(cin, str);
-		splitStrings = split(str, ' ');
-	}
-	
-	// Convert to "rad" (array of ints)
-	int rad[7] = { 0 };
-	for (int i = 0; i < 7; i++){
-		rad[i] = stoi(splitStrings[i]);
-	}
-
-	Result result = lottoExperiment(rad, 52);
-	
-	cout << "Result" << endl;
-	cout << "min matches: " << result.minResult << endl;
-	cout << "max matches: " << result.maxResult << endl;
-	cout << "avg matches: " << result.averageResult << endl;
-	cout << "tries for max result: " << result.triesUntilMaxResult << endl;
 	while (1){
+		// Input 7 numbers and split into vector of strings.
+		vector<string> splitStrings;
+		string str = "";
+		while (splitStrings.size() != 7){
+			cout << "Enter \"lottorad\" (7 numbers separated by spaces): ";
+			getline(cin, str);
+			splitStrings = split(str, ' ');
+		}
+	
+		// Convert to "rad" (array of ints)
+		int rad[7] = { 0 };
+		for (int i = 0; i < 7; i++){
+			rad[i] = stoi(splitStrings[i]);
+		}
 
+		Result result = lottoExperiment(rad, numWeeks);
+	
+		cout << "Result" << endl;
+		cout << "min matches: " << result.minResult << endl;
+		cout << "max matches: " << result.maxResult << endl;
+		cout << "avg matches: " << result.averageResult << endl;
+		cout << "tries for max result: " << result.triesUntilMaxResult << endl << endl;
+		cout << "Occurences" << "                     " << "Actual" << endl;
+		for (int i = 0; i <= 7; i++){
+			string str;
+			str += to_string(result.occurences[i]);
+			str += stringRepeat(" ", 12 - str.length());
+			str += to_string((double)result.occurences[i] / numWeeks * 100);
+			str += "%";
+			str += stringRepeat(" ", 28 - str.length());
+			double actual = probabilityLotto(7, i, 35) * 100;
+			str += to_string(actual);
+			str += "%";
+			cout << i << "  " << str << endl;
+		}
 	}
 }
