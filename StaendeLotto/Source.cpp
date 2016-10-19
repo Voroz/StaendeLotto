@@ -172,7 +172,7 @@ void main(){
 			str += to_string((double)result.occurences[i] / numWeeks * 100);
 			str += "%";
 			str += stringRepeat(" ", 28 - str.length());
-			double actual = probabilityLotto(7, i, 35) * 100;
+			double actual = 0;
 			str += to_string(actual);
 			str += "%";
 			cout << i << "  " << str << endl;
