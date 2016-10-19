@@ -87,7 +87,12 @@ double binomial(int n, int k, double chance){
 // Todo: Verkar som att vi får overflow här, samt så funkar den ej även för lägre nummer.
 double probabilityLotto(long long int n, long long int k, long long int nrOfLegalNumbers){
 	long long int combinations = factorial(n) / (factorial(n - k) * factorial(k));
-	return (double) 1 / (combinations * factorial(k) * factorial(nrOfLegalNumbers - n) * (factorial(nrOfLegalNumbers - n) / factorial(nrOfLegalNumbers - n - (n - k)))) / factorial(nrOfLegalNumbers);
+	double p = combinations * factorial(nrOfLegalNumbers - n) * factorial(k);
+	for (int i = 0; i < n - k; i++){
+		p *= (1 - (n - i));
+	}
+	p /= factorial(nrOfLegalNumbers);
+	return 1 / p;
 }
 
 Result lottoExperiment(int(&rad)[7], const int numWeeks){
