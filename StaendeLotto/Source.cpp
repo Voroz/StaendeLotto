@@ -50,30 +50,6 @@ void getLotto(int(&tal)[7]){
 	}
 }
 
-// Doesn't count negative values.
-template <size_t N>
-int* countOccurences(int(&arr)[N], int maxVal){
-	static int occArr[maxVal + 1] = { 0 };
-	for (int i = 0; i < N; i++) {
-		if (arr[i] <= maxVal) {
-			occArr[arr[i]]++;
-		}
-	}
-	return occArr;
-}
-
-// Arrays of same length
-template <size_t N>
-int* matchingArr(int(&arr1)[N], int(&arr2)[N], int numberToMatch){
-	static bool arrMatch[N] = { 0 };
-	for (int i = 0; i < N; i++){
-		if (arr1[i] == arr2[i] == numberToMatch){
-			arrMatch[i]++;
-		}
-	}
-	return arrMatch;
-}
-
 template <size_t N>
 int countOccurencesOf(int(&arr)[N], int number){
 	int count = 0;
