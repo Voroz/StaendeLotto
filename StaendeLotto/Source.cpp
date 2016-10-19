@@ -2,6 +2,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
+#include <string>
+#include <sstream>
+#include <vector>	// Använder bara för att göra användar input smidigare.
 
 
 using namespace std;
@@ -108,13 +111,38 @@ Result lottoExperiment(int(&rad)[7], const int numWeeks){
 	return res;
 }
 
+vector<string> split(const string &str, char delim) {
+	stringstream ss;
+	ss.str(str);
+	string item;
+	vector<string> splitVec;
+	while (getline(ss, item, delim)) {
+		splitVec.push_back(item);
+	}
+	return splitVec;
+}
 
-// Skriver ut en lottorad
+
 void main(){
 	srand(time(NULL));
 
-	int rad[7] = { 1, 5, 7, 10, 2, 25, 31 };
+	// Input 7 numbers and split into vector of strings.
+	vector<string> splitStrings;
+	string str = "";
+	while (splitStrings.size() != 7){
+		cout << "Enter \"lottorad\" (7 numbers separated by spaces): ";
+		getline(cin, str);
+		splitStrings = split(str, ' ');
+	}
+	
+	// Convert to "rad" (array of ints)
+	int rad[7] = { 0 };
+	for (int i = 0; i < 7; i++){
+		rad[i] = stoi(splitStrings[i]);
+	}
+
 	Result result = lottoExperiment(rad, 52);
+	
 	cout << "Result" << endl;
 	cout << "min matches: " << result.minResult << endl;
 	cout << "max matches: " << result.maxResult << endl;
